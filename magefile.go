@@ -118,10 +118,11 @@ func All() error {
 		return err
 	}
 
+	skipFailed := os.Getenv("HARBOR_CONTINUE_ON_FAILED") == "true"
 	for _, script := range scripts {
 		args := addVusAndIterationsArgs(getK6RunArgs(script))
 
-		if err := sh.RunWithV(env, K6Command, args...); err != nil {
+		if err := sh.RunWithV(env, K6Command, args...); !skipFailed && err != nil {
 			return err
 		}
 	}
